@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bank-marketing-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: bank-marketing-api
+  template:
+    metadata:
+      labels:
+        app: bank-marketing-api
+    spec:
+      containers:
+        - name: api
+          image: <acr-name>.azurecr.io/bank-marketing-api:latest
+          ports:
+            - containerPort: 8000
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bank-marketing-api
+spec:
+  type: LoadBalancer
+  selector:
+    app: bank-marketing-api
+  ports:
+    - port: 80
+      targetPort: 8000

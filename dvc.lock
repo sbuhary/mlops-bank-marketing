@@ -1,0 +1,104 @@
+schema: '2.0'
+stages:
+  prepare:
+    cmd: python -m src.data.load_data
+    deps:
+    - path: data/raw/bank.csv
+      hash: md5
+      md5: 702a2fe72fcb43ea02250cc84085c229
+      size: 2022
+    - path: src/data/load_data.py
+      hash: md5
+      md5: d6ef178e9e39553954daccd3981bbfab
+      size: 1384
+    - path: src/data/validate.py
+      hash: md5
+      md5: e9a7b7c5f66929229256dce645ab8b24
+      size: 1782
+    params:
+      params.yaml:
+        data:
+          raw_path: data/raw/bank.csv
+          processed_dir: data/processed
+          target: target
+        split:
+          test_size: 0.25
+          random_state: 42
+    outs:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: 5587b0ec04e152d89317eec76800f146
+      size: 615
+    - path: data/processed/train.csv
+      hash: md5
+      md5: 9d5d8253fec7758632dc62c24a8f9e53
+      size: 1528
+  train:
+    cmd: python -m src.models.train
+    deps:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: 5587b0ec04e152d89317eec76800f146
+      size: 615
+    - path: data/processed/train.csv
+      hash: md5
+      md5: 9d5d8253fec7758632dc62c24a8f9e53
+      size: 1528
+    - path: src/features/preprocessing.py
+      hash: md5
+      md5: 26d97ca579cf1827ba3c06e20733b2a4
+      size: 765
+    - path: src/models/train.py
+      hash: md5
+      md5: 11fe6894ab97d3874a9b102053739e1f
+      size: 5753
+    params:
+      params.yaml:
+        mlflow:
+          experiment_name: bank-marketing-subscription
+          tracking_uri: sqlite:///mlflow.db
+        models:
+          logistic_regression:
+            max_iter: 1000
+            solver: liblinear
+            random_state: 42
+          random_forest:
+            n_estimators: 100
+            max_depth: 6
+            random_state: 42
+            class_weight: balanced
+        training:
+          selection_metric: f1
+    outs:
+    - path: models/best_model.pkl
+      hash: md5
+      md5: 702d585aee87b04a1fca8aac933f8722
+      size: 5302
+    - path: models/model_metadata.json
+      hash: md5
+      md5: a16c29c85ad845350ff465b885c7bf16
+      size: 541
+    - path: reports/train_metrics.json
+      hash: md5
+      md5: a16c29c85ad845350ff465b885c7bf16
+      size: 541
+  evaluate:
+    cmd: python -m src.models.evaluate
+    deps:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: 5587b0ec04e152d89317eec76800f146
+      size: 615
+    - path: models/best_model.pkl
+      hash: md5
+      md5: 702d585aee87b04a1fca8aac933f8722
+      size: 5302
+    - path: src/models/evaluate.py
+      hash: md5
+      md5: d9c47d9a416e9095a8365782fe746221
+      size: 1003
+    outs:
+    - path: reports/metrics.json
+      hash: md5
+      md5: 42beb9e803ab01aee1245af4778280fb
+      size: 76

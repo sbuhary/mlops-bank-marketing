@@ -1,0 +1,26 @@
+{
+  "model_name": "logistic_regression",
+  "registered_model_name": "bank-marketing-model",
+  "model_version": "1.0",
+  "selection_metric": "f1",
+  "metrics": {
+    "accuracy": 1.0,
+    "f1": 1.0,
+    "precision": 1.0,
+    "recall": 1.0
+  },
+  "all_metrics": {
+    "logistic_regression": {
+      "accuracy": 1.0,
+      "f1": 1.0,
+      "precision": 1.0,
+      "recall": 1.0
+    },
+    "random_forest": {
+      "accuracy": 0.875,
+      "f1": 0.8888888888888888,
+      "precision": 0.8,
+      "recall": 1.0
+    }
+  }
+}

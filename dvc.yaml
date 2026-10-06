@@ -1,0 +1,39 @@
+stages:
+  prepare:
+    cmd: python -m src.data.load_data
+    deps:
+      - data/raw/bank.csv
+      - src/data/load_data.py
+      - src/data/validate.py
+    params:
+      - data
+      - split
+    outs:
+      - data/processed/train.csv
+      - data/processed/test.csv
+  train:
+    cmd: python -m src.models.train
+    deps:
+      - data/processed/train.csv
+      - data/processed/test.csv
+      - src/features/preprocessing.py
+      - src/models/train.py
+    params:
+      - models
+      - training
+      - mlflow
+    outs:
+      - models/best_model.pkl
+      - models/model_metadata.json
+    metrics:
+      - reports/train_metrics.json:
+          cache: false
+  evaluate:
+    cmd: python -m src.models.evaluate
+    deps:
+      - models/best_model.pkl
+      - data/processed/test.csv
+      - src/models/evaluate.py
+    metrics:
+      - reports/metrics.json:
+          cache: false

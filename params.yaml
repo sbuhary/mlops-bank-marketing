@@ -1,0 +1,27 @@
+data:
+  raw_path: data/raw/bank.csv
+  processed_dir: data/processed
+  target: target
+split:
+  test_size: 0.25
+  random_state: 42
+training:
+  selection_metric: f1
+models:
+  logistic_regression:
+    max_iter: 1000
+    solver: liblinear
+    random_state: 42
+  random_forest:
+    n_estimators: 100
+    max_depth: 6
+    random_state: 42
+    class_weight: balanced
+mlflow:
+  experiment_name: bank-marketing-subscription
+  tracking_uri: sqlite:///mlflow.db
+artifacts:
+  model_dir: models
+  reports_dir: reports
+serving:
+  model_version: "1.0"
