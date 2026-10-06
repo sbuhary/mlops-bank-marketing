@@ -17,7 +17,7 @@ api:
 	uvicorn app.main:app --reload
 
 test:
-	pytest
+	python -m pytest
 
 docker:
 	docker compose up --build
